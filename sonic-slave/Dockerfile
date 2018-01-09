@@ -233,17 +233,19 @@ RUN apt-get update && apt-get install -y \
         texlive-latex-extra \
         texlive-latex-recommended
 
+################################################################## Modified by Ruijie Yyz
+##  RUN apt-get -y build-dep linux会失败，是因为backport源的debhelper版本过高，需要删除Debian源中的backport 源  (ps: 别忘了执行apt-get update)
+RUN sed -i '/backports/d' /etc/apt/sources.list  &&  apt-get pudate
+#########################################################################################
 # For linux build
 RUN apt-get -y build-dep linux
 
 # For gobgp build
 RUN export VERSION=1.8.3 \
 ################################################################## Modified by Ruijie Yyz
-##  修改wget这条，因为它是在线下载，且IP地址被我们的墙挡着了。所以，我将它下下来，放在coding git上。
+##  修改wget这条，因为它是在线下载，且IP地址被我们的墙挡着了。所以，我们将他传到国内阿里云上。
 ##  && wget https://storage.googleapis.com/golang/go$VERSION.linux-amd64.tar.gz \
- && git clone https://git.coding.net/snow420/go$VERSION.git \  
- && mv  go$VERSION/go$VERSION.linux-amd64.tar.gz \
- && rm -rf go$VERSION \
+ && wget http://nosss.oss-cn-beijing.aliyuncs.com/go$VERSION.linux-amd64.tar.gz \
 #########################################################################################
  && tar -C /usr/local -xzf go$VERSION.linux-amd64.tar.gz \
  && echo 'export GOROOT=/usr/local/go' >> /etc/bash.bashrc \
@@ -253,11 +255,6 @@ RUN export VERSION=1.8.3 \
 RUN pip install \
         ctypesgen \
         crc16
-
-################################################################## Modified by Ruijie Yyz
-##  RUN apt-get -y build-dep linux会失败，是因为backport源的debhelper版本过高，需要删除Debian源中的backport 源  (ps: 别忘了执行apt-get update)
-RUN sed -i '/backports/d' /etc/apt/sources.list  &&  apt-get pudate
-#########################################################################################
 
 # For templating
 RUN pip install j2cli
