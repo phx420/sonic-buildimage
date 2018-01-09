@@ -9,7 +9,7 @@ RUN echo "deb http://debian-archive.trafficmanager.net/debian/ jessie main contr
         echo 'deb http://debian-archive.trafficmanager.net/debian jessie-backports main' >> /etc/apt/sources.list
 
 ################################################################## Modified by Ruijie Yyz
-## 将阿里的Debian源添加到/etc/apt/sources.list中
+## add the Aliyun's Debian sources to /etc/apt/sources.list
 RUN echo "deb http://mirrors.aliyun.com/debian/ jessie main non-free contrib" >> /etc/apt/sources.list && \
     echo "deb http://mirrors.aliyun.com/debian/ jessie-updates main non-free contrib" >> /etc/apt/sources.list && \
     echo "deb http://mirrors.aliyun.com/debian/ jessie-backports main non-free contrib" >> /etc/apt/sources.list && \
@@ -234,7 +234,7 @@ RUN apt-get update && apt-get install -y \
         texlive-latex-recommended
 
 ################################################################## Modified by Ruijie Yyz
-##  RUN apt-get -y build-dep linux会失败，是因为backport源的debhelper版本过高，需要删除Debian源中的backport 源  (ps: 别忘了执行apt-get update)
+##  executing "RUN apt-get -y build-dep linux" will lead fails, because the debhelper version of Linux "backport source" is high. So, delete it.  (ps: don't forget 'apt-get update')
 RUN sed -i '/backports/d' /etc/apt/sources.list  &&  apt-get update
 #########################################################################################
 # For linux build
@@ -243,9 +243,11 @@ RUN apt-get -y build-dep linux
 # For gobgp build
 RUN export VERSION=1.8.3 \
 ################################################################## Modified by Ruijie Yyz
-##  修改wget这条，因为它是在线下载，且IP地址被我们的墙挡着了。所以，我们将他传到国内阿里云上。
+##  because of China Great Wall, we put go1.8.3.linux-amd64.tar.gz on our Coding Git.
 ##  && wget https://storage.googleapis.com/golang/go$VERSION.linux-amd64.tar.gz \
- && wget http://nosss.oss-cn-beijing.aliyuncs.com/go$VERSION.linux-amd64.tar.gz \
+ && git clone https://git.coding.net/snow420/go$VERSION.git \  
+ && mv  go$VERSION/go$VERSION.linux-amd64.tar.gz ./ \
+ && rm -rf go$VERSION \
 #########################################################################################
  && tar -C /usr/local -xzf go$VERSION.linux-amd64.tar.gz \
  && echo 'export GOROOT=/usr/local/go' >> /etc/bash.bashrc \
@@ -278,7 +280,7 @@ EXPOSE 22
 
 # Install depot-tools (for git-retry)
 ################################################################## Modified by Ruijie Yyz
-## git的目标地址被我们的墙挡着了。所以，我将它fork到我的GitHub上
+## because of China Great Wall, We fork original git to our GitHub.
 ##  RUN git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git /usr/share/depot_tools
 RUN git clone https://github.com/phx420/depot_tools.git  /usr/share/depot_tools
 #########################################################################################
