@@ -235,7 +235,7 @@ RUN apt-get update && apt-get install -y \
 
 ################################################################## Modified by Ruijie Yyz
 ##  RUN apt-get -y build-dep linux会失败，是因为backport源的debhelper版本过高，需要删除Debian源中的backport 源  (ps: 别忘了执行apt-get update)
-RUN sed -i '/backports/d' /etc/apt/sources.list  &&  apt-get pudate
+RUN sed -i '/backports/d' /etc/apt/sources.list  &&  apt-get update
 #########################################################################################
 # For linux build
 RUN apt-get -y build-dep linux
